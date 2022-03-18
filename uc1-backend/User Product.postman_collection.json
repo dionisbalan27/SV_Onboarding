@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "6f109f09-1fe5-4251-81ce-7305edf29e27",
+		"name": "User Product",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Detail User",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"personalNumber\": \"124141\",\r\n    \"password\": \"fdmfiwet23\",\r\n    \"email\": \"test@test.com\",\r\n    \"name\": \"john doe\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/user/5278ec9c-f669-4e30-b2e6-8ee40caa2355",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"user",
+						"5278ec9c-f669-4e30-b2e6-8ee40caa2355"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"personalNumber\": \"123567\",\r\n    \"password\": \"fdmfiwet23\",\r\n    \"email\": \"test@test.com\",\r\n    \"name\": \"Dani Lin\",\r\n    \"active\": true,\r\n    \"role\": {\r\n        \"id\": \"92835bbe248c5-d5e9-42bf-9ba4-20d89670dc56908235\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/user/ef1d4ea3-1440-469c-bdf2-5f9b4e4fee4a",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"user",
+						"ef1d4ea3-1440-469c-bdf2-5f9b4e4fee4a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"personalNumber\": \"199494\",\r\n    \"password\": \"edo456\",\r\n    \"email\": \"Ed34@test.com\",\r\n    \"name\": \"Edho\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8001/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8001/user/5278ec9c-f669-4e30-b2e6-8ee40caa2355",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"user",
+						"5278ec9c-f669-4e30-b2e6-8ee40caa2355"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"product abc\",\r\n    \"description\": \"this is product abc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/product",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8001/products",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"product abc\",\r\n    \"description\": \"this is product abc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/products/eaefb6dc-6ff7-44be-bdd1-b8f5e1e9d1fb/checked",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"products",
+						"eaefb6dc-6ff7-44be-bdd1-b8f5e1e9d1fb",
+						"checked"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8001/product/0eaefb6dc-6ff7-44be-bdd1-b8f5e1e9d1fb",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"product",
+						"0eaefb6dc-6ff7-44be-bdd1-b8f5e1e9d1fb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Detail Product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8001/products/eaefb6dc-6ff7-44be-bdd1-b8f5e1e9d1fb",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"products",
+						"eaefb6dc-6ff7-44be-bdd1-b8f5e1e9d1fb"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
