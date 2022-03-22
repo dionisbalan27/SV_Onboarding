@@ -12,7 +12,7 @@ import (
 type ProductRepository interface {
 	GetAllProducts() ([]entity.ProductList, error)
 	GetProductById(string) (*entity.ProductDetailID, error)
-	CreateNewProduct(product entity.Product) (*entity.Product, error)
+	CreateNewProduct(entity.Product, string) (*entity.Product, error)
 	UpdateProductData(entity.Product, string) (*entity.Product, error)
 	UpdateCheckProduct(entity.Product, string, string) (*entity.Product, error)
 	UpdatePublishProduct(entity.Product, string, string) (*entity.Product, error)
@@ -44,10 +44,10 @@ func (repo *productRepository) GetAllProducts() ([]entity.ProductList, error) {
 	return products, nil
 }
 
-func (repo *productRepository) CreateNewProduct(product entity.Product) (*entity.Product, error) {
+func (repo *productRepository) CreateNewProduct(product entity.Product, id_user string) (*entity.Product, error) {
 	product.ID = uuid.New().String()
 	product.Status = "inactive"
-	product.MakerID = "system"
+	product.MakerID = id_user
 
 	if err := repo.mysqlConnection.Create(&product).Error; err != nil {
 		return nil, err

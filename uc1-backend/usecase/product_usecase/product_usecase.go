@@ -13,7 +13,7 @@ import (
 type ProductUsecase interface {
 	GetAllProducts() dto.Response
 	GetProductById(string) dto.Response
-	CreateNewProduct(dto.Product) dto.Response
+	CreateNewProduct(dto.Product, string) dto.Response
 	UpdateProductData(dto.Product, string) dto.Response
 	UpdatePublishProduct(dto.Product, string, string) dto.Response
 	UpdateCheckProduct(dto.Product, string, string) dto.Response
@@ -41,7 +41,7 @@ func (product *productUsecase) GetAllProducts() dto.Response {
 	return helpers.ResponseSuccess("ok", nil, productlist)
 }
 
-func (product *productUsecase) CreateNewProduct(newProduct dto.Product) dto.Response {
+func (product *productUsecase) CreateNewProduct(newProduct dto.Product, id_user string) dto.Response {
 
 	productInsert := entity.Product{
 		ID:          newProduct.ID,
@@ -49,7 +49,7 @@ func (product *productUsecase) CreateNewProduct(newProduct dto.Product) dto.Resp
 		Description: newProduct.Description,
 	}
 
-	productData, err := product.productRepo.CreateNewProduct(productInsert)
+	productData, err := product.productRepo.CreateNewProduct(productInsert, id_user)
 
 	if err != nil {
 		return helpers.ResponseError("Internal server error", err)

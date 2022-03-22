@@ -16,7 +16,7 @@ type UserRepository interface {
 	CreateNewUser(entity.User) (*entity.User, error)
 	UpdateUserData(entity.User, string) (*entity.User, error)
 	DeleteUserById(string) error
-	CheckLogin(dto.Login) (string, error)
+	CheckLogin(dto.Login) (*entity.CheckLogin, error)
 }
 
 type userRepository struct {
@@ -96,21 +96,21 @@ func (repo *userRepository) DeleteUserById(id string) error {
 	return nil
 }
 
-func (repo *userRepository) CheckLogin(user dto.Login) (string, error) {
+func (repo *userRepository) CheckLogin(user dto.Login) (*entity.CheckLogin, error) {
 	data := entity.CheckLogin{}
 
-	err := repo.mysqlConnection.Model(&entity.User{}).Where("users.personal_number = ?", user.Personal_number).Select("users.password, users.id").Scan(&data).Error
+	err := repo.mysqlConnection.Model(&entity.User{}).Where("users.personal_number = ?", user.Personal_number).Select("users.id, users.name, users.password").Scan(&data).Error
 
 	if err != nil {
 		fmt.Println("Query error")
-		return "", err
+		return &data, err
 	}
 
 	match, err := helpers.CheckPasswordHash(user.Password, data.Password)
 	if !match {
 		fmt.Println("Hash and password doesn't match.")
-		return "", err
+		return &data, err
 	}
 
-	return data.ID, nil
+	return &data, nil
 }

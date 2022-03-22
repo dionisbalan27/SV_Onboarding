@@ -142,12 +142,12 @@ func (user *userUsecase) UserLogin(newUser dto.Login) dto.Response {
 		return helpers.ResponseError("Error Data not found", 404)
 	}
 
-	t, err := user.jwtUsecase.GenerateToken(res)
+	t, err := user.jwtUsecase.GenerateToken(res.ID)
 	if err != nil {
 		return helpers.ResponseError("Internal server error", 500)
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"token": t})
+		"token": t, "name": res.Name})
 
 }

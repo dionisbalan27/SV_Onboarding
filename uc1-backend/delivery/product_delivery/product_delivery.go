@@ -69,7 +69,9 @@ func (res *productDelivery) CreateNewProduct(c *gin.Context) {
 			return
 		}
 	}
-	response := res.usecase.CreateNewProduct(request)
+	id_user, _ := c.Get("user_id")
+	str_id_user := fmt.Sprintf("%v", id_user)
+	response := res.usecase.CreateNewProduct(request, str_id_user)
 	if response.Status != "ok" {
 		errorRes := helpers.ResponseError("Internal server error", 500)
 		c.JSON(http.StatusInternalServerError, errorRes)

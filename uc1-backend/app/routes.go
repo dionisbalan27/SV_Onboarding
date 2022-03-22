@@ -31,14 +31,14 @@ func InitRouter(postgresConn *gorm.DB) *gin.Engine {
 	router := gin.Default()
 	router.Use(defaultCors)
 
-	router.GET("/users", userDelivery.GetAllUsers)
-	router.GET("/user/:id", userDelivery.GetUserById)
 	router.POST("/user", userDelivery.CreateNewUser)
 	router.POST("/login", userDelivery.UserLogin)
 
 	protectedRoutes := router.Group("/")
 	protectedRoutes.Use(middleware.JWTAuth(jwtUsecase))
 	{
+		protectedRoutes.GET("/users", userDelivery.GetAllUsers)
+		protectedRoutes.GET("/user/:id", userDelivery.GetUserById)
 		protectedRoutes.GET("/products", productDelivery.GetAllProducts)
 		protectedRoutes.GET("/products/:id", productDelivery.GetProductById)
 		protectedRoutes.POST("/product", productDelivery.CreateNewProduct)
