@@ -107,59 +107,12 @@ const ProductTable = () => {
    * @zh-CN 国际化配置
    * */
 
-  const handleRemoveProduct = async (id) => {
-    try {
-      const response = await removeProduct(id);
-      if (response.status === 'ok') {
-        message.success('Deleted successfully');
-        actionRef.current.reload();
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleUpdateProduct = async (value) => {
-    const payload = {
-      name: value.name,
-      description: value.description,
-    };
-
-    try {
-      const response = await updateProduct(value.id, payload);
-      if (response.status === 'ok') {
-        message.success('Update user successfully');
-        handleModalVisible(false);
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
   const handleProductDetail = async (id) => {
     try {
       const response = await productDetail(id);
       if (response.status === 'ok') {
         setShowDetail(true);
         setCurrentRow(response.data);
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleCreateProduct = async (value) => {
-    try {
-      const response = await createNewProduct(value);
-      if (response.status === 'ok') {
-        message.success('Product created successfully');
-        handleModalVisible(false);
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
       }
     } catch (error) {
       message.error(error?.data?.error);
@@ -188,22 +141,6 @@ const ProductTable = () => {
         return (
           <div style={{ display: 'flex' }}>
             <div style={{ marginRight: 5 }}>
-              <Button onClick={() => handleRemoveProduct(rowData.id)}>
-                <DeleteOutlined />
-              </Button>
-            </div>
-            <div style={{ marginRight: 5 }}>
-              <Button
-                onClick={() => {
-                  handleModalVisible(true);
-                  setCurrentRow(rowData);
-                  setModalType('edit');
-                }}
-              >
-                <EditOutlined />
-              </Button>
-            </div>
-            <div style={{ marginRight: 5 }}>
               <Button
                 onClick={() => {
                   handleProductDetail(rowData.id);
@@ -229,19 +166,6 @@ const ProductTable = () => {
         search={{
           labelWidth: 120,
         }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              setCurrentRow(undefined);
-              setModalType('add');
-              handleModalVisible(true);
-            }}
-          >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
-          </Button>,
-        ]}
         request={product}
         columns={columns}
         rowSelection={{
@@ -295,27 +219,6 @@ const ProductTable = () => {
         </Button>
       </FooterToolbar>
     )} */}
-      <ModalForm
-        initialValues={{
-          name: currentRow?.name,
-          description: currentRow?.description,
-        }}
-        title={intl.formatMessage({
-          id: 'pages.productTable.createForm.newRule',
-          defaultMessage: modalType === 'edit' ? 'Edit Product' : 'Create Product',
-        })}
-        width="400px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={(value) =>
-          modalType === 'edit'
-            ? handleUpdateProduct({ ...value, id: currentRow.id })
-            : handleCreateProduct(value)
-        }
-      >
-        <ProFormText width="md" name="name" placeholder="Name" label="Name" />
-        <ProFormText width="md" name="description" placeholder="Description" label="Description" />
-      </ModalForm>
 
       <Drawer
         width={600}

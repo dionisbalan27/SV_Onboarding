@@ -10,7 +10,6 @@ export async function currentUser(options) {
     ...(options || {}),
   });
 }
-/** 退出登录接口 POST /api/login/outLogin */
 
 export async function outLogin(options) {
   return request('/api/login/outLogin', {
@@ -18,7 +17,15 @@ export async function outLogin(options) {
     ...(options || {}),
   });
 }
-/** 登录接口 POST /api/login/account */
+
+export async function register(payload) {
+  return request(`http://localhost:8001/user`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
+  });
+}
 
 export async function login(body) {
   return request('http://localhost:8001/login', {
@@ -53,6 +60,38 @@ export async function user(params) {
   });
 }
 /** 新建规则 PUT /api/rule */
+export async function getRole() {
+  return request(`http://localhost:8001/roles`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+  });
+}
+
+export async function userDetail(id) {
+  console.log(id);
+  return request(`http://localhost:8001/user/${id}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+  });
+}
+
+export async function updateUser(id, payload) {
+  return request(`http://localhost:8001/user/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
+  });
+}
+
+export async function removeUser(id) {
+  console.log(id);
+  return request(`http://localhost:8001/user/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    skipErrorHandler: true,
+  });
+}
 
 export async function product(params) {
   const options = {
@@ -65,6 +104,39 @@ export async function product(params) {
     method: 'GET',
     params: { ...params },
     ...(options || {}),
+  });
+}
+
+export async function productDetail(id) {
+  return request(`http://localhost:8001/products/${id}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+  });
+}
+
+export async function createNewProduct(payload) {
+  return request(`http://localhost:8001/product`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
+  });
+}
+
+export async function updateProduct(id, payload) {
+  return request(`http://localhost:8001/products/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
+  });
+}
+
+export async function removeProduct(id) {
+  return request(`http://localhost:8001/product/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    skipErrorHandler: true,
   });
 }
 

@@ -27,7 +27,11 @@ export async function getInitialState() {
     // }
 
     if (localStorage.getItem('token')) {
-      return { name: 'dion', isLogin: true };
+      return {
+        name: localStorage.getItem('username'),
+        isLogin: true,
+        access: localStorage.getItem('role'),
+      };
     } else {
       history.push(loginPath);
       //return { name: null, isLogin: false };

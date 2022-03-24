@@ -11,6 +11,11 @@ export default [
             path: '/user/login',
             component: './user/Login',
           },
+          {
+            name: 'register',
+            path: '/user/register',
+            component: './user/Register',
+          },
         ],
       },
       {
@@ -25,35 +30,35 @@ export default [
     component: './Welcome',
   },
   {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
+    name: 'list.table-list',
+    icon: 'table',
+    path: '/admin/users',
     access: 'canAdmin',
-    component: './Admin',
-    routes: [
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        icon: 'smile',
-        component: './Welcome',
-      },
-      {
-        component: './404',
-      },
-    ],
+    component: './admin/UserTable',
   },
+  {
+    icon: 'table',
+    name: 'list.basic-list',
+    path: '/admin/products',
+    access: 'canAdmin',
+    component: './admin/ProductTable',
+  },
+
   {
     name: 'list.table-list',
     icon: 'table',
-    path: '/userlist',
-    component: './TableList',
+    path: '/viewer/users',
+    access: 'canViewer' || 'canSigner' || 'canMaker' || 'canChecker',
+    component: './UserTable',
   },
   {
-    name: 'list.table-list',
     icon: 'table',
+    name: 'list.basic-list',
     path: '/productlist',
-    component: './ProductList',
+    access: 'canViewer',
+    component: './viewer/ProductTable',
   },
+
   {
     path: '/',
     redirect: '/welcome',

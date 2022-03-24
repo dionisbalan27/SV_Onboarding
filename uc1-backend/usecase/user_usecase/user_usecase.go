@@ -137,7 +137,7 @@ func (user *userUsecase) DeleteUserById(id string) dto.Response {
 
 func (user *userUsecase) UserLogin(newUser dto.Login) dto.Response {
 
-	res, err := user.userRepo.CheckLogin(newUser)
+	res, role, err := user.userRepo.CheckLogin(newUser)
 	if err != nil {
 		return helpers.ResponseError("Error Data not found", 404)
 	}
@@ -148,6 +148,6 @@ func (user *userUsecase) UserLogin(newUser dto.Login) dto.Response {
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"token": t, "name": res.Name})
+		"token": t, "name": res.Name, "role": role})
 
 }

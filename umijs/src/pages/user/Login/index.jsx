@@ -34,7 +34,6 @@ const Login = () => {
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
-    console.log('state', initialState);
 
     if (userInfo) {
       await setInitialState((s) => ({ ...s, currentUser: userInfo }));
@@ -46,8 +45,10 @@ const Login = () => {
     try {
       const msg = await login(values);
       if (msg.status === 'ok') {
+        console.log(msg.data.role);
         localStorage.setItem('token', msg.data.token);
         localStorage.setItem('username', msg.data.name);
+        localStorage.setItem('role', msg.data.role);
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
@@ -56,11 +57,29 @@ const Login = () => {
         await fetchUserInfo();
         /** 此方法会跳转到 redirect 参数所在的位置 */
 
-        if (!history) return;
-        const { query } = history.location;
-        const { redirect } = query;
-        history.push(redirect || '/');
-        return;
+        // if (!history) return;
+        // const { query } = history.location;
+        // const { redirect } = query;
+        if (msg.data.role == 'viewer') {
+          console.log('success');
+          history.push('/viewer/');
+          return;
+        }
+        if (msg.data.role == 'admin') {
+          history.push('/admin');
+          return;
+        }
+        if (msg.data.role === 'maker') {
+          history.push('/');
+          return;
+        }
+        if (msg.data.role === 'checker') {
+          history.push('/checker');
+          return;
+        } else {
+          history.push(redirect || '/');
+          return;
+        }
       }
 
       console.log(msg); // 如果失败去设置用户错误信息

@@ -1,9 +1,12 @@
 package app
 
 import (
+	"backend-api/delivery/role_delivery"
 	"backend-api/delivery/user_delivery"
+	"backend-api/repository/role_repository"
 	"backend-api/repository/user_repository"
 	"backend-api/usecase/jwt_usecase"
+	"backend-api/usecase/role_usecase"
 	"backend-api/usecase/user_usecase"
 
 	"backend-api/delivery/product_delivery"
@@ -23,6 +26,10 @@ func InitRouter(postgresConn *gorm.DB) *gin.Engine {
 	userUsecase := user_usecase.GetUserUsecase(jwtUsecase, userRepository)
 	userDelivery := user_delivery.GetUserDelivery(userUsecase)
 
+	roleRepository := role_repository.GetRoleRepository(postgresConn)
+	roleUsecase := role_usecase.GetRoleUsecase(roleRepository)
+	roleDelivery := role_delivery.GetRoleDelivery(roleUsecase)
+
 	productRepository := product_repository.GetProductRepository(postgresConn)
 	productUsecase := product_usecase.GetProductUsecase(productRepository)
 	productDelivery := product_delivery.GetProductDelivery(productUsecase)
@@ -33,6 +40,7 @@ func InitRouter(postgresConn *gorm.DB) *gin.Engine {
 
 	router.POST("/user", userDelivery.CreateNewUser)
 	router.POST("/login", userDelivery.UserLogin)
+	router.GET("/roles", roleDelivery.GetAllRole)
 
 	protectedRoutes := router.Group("/")
 	protectedRoutes.Use(middleware.JWTAuth(jwtUsecase))

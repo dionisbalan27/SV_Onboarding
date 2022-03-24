@@ -81,20 +81,7 @@ func (res *userDelivery) UpdateUserData(c *gin.Context) {
 	id := c.Param("id")
 	request := dto.User{}
 	c.ShouldBindJSON(&request)
-	if err := c.ShouldBindJSON(&request); err != nil {
-		errorMessages := []string{}
-		for _, e := range err.(validator.ValidationErrors) {
-			errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
-			errorMessages = append(errorMessages, errorMessage)
-		}
 
-		if len(errorMessages) > 0 {
-			errorRes := helpers.ResponseError("Error Bad Request", 400)
-			c.JSON(http.StatusBadRequest, errorRes)
-			return
-		}
-
-	}
 	response := res.usecase.UpdateUserData(request, id)
 	if response.Status != "ok" {
 		errorRes := helpers.ResponseError("Internal server error", 500)

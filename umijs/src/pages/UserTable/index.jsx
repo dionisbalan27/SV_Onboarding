@@ -1,13 +1,12 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
 import { Button, message, Input, Drawer } from 'antd';
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useIntl, FormattedMessage } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+import { ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 import ProDescriptions from '@ant-design/pro-descriptions';
-import UpdateForm from './components/UpdateForm';
-import { user } from '@/services/ant-design-pro/api';
+import { user, userDetail } from '@/services/ant-design-pro/api';
 /**
  * @en-US Add node
  * @zh-CN 添加节点
@@ -60,25 +59,7 @@ import { user } from '@/services/ant-design-pro/api';
 //  * @param selectedRows
 //  */
 
-// const handleRemove = async (selectedRows) => {
-//   const hide = message.loading('正在删除');
-//   if (!selectedRows) return true;
-
-//   try {
-//     await removeRule({
-//       key: selectedRows.map((row) => row.key),
-//     });
-//     hide();
-//     message.success('Deleted successfully and will refresh soon');
-//     return true;
-//   } catch (error) {
-//     hide();
-//     message.error('Delete failed, please try again');
-//     return false;
-//   }
-// };
-
-const TableList = () => {
+const UserTabel = () => {
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
@@ -88,7 +69,7 @@ const TableList = () => {
    * @en-US The pop-up window of the distribution update window
    * @zh-CN 分布更新窗口的弹窗
    * */
-
+  const [roleData, setRoleData] = useState([]);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const actionRef = useRef();
@@ -98,12 +79,35 @@ const TableList = () => {
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
+  const handleUserDetail = async (id) => {
+    try {
+      const response = await userDetail(id);
+      console.log(response.data);
+      if (response.status === 'ok') {
+        setShowDetail(true);
+        setCurrentRow(response.data);
+      }
+    } catch (error) {
+      message.error(error?.data?.error);
+    }
+  };
 
   const intl = useIntl();
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
+      render: (dom, entity) => {
+        return (
+          <a
+            onClick={() => {
+              handleUserDetail(entity.id);
+            }}
+          >
+            {dom}
+          </a>
+        );
+      },
     },
     {
       title: 'Role',
@@ -126,30 +130,39 @@ const TableList = () => {
         return <p>{row.active ? 'Active' : 'Inactive'}</p>;
       },
     },
+    {
+      title: 'Action',
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, rowData) => {
+        return (
+          <div style={{ display: 'flex' }}>
+            <div style={{ marginRight: 5 }}>
+              <Button
+                onClick={() => {
+                  handleUserDetail(rowData.id);
+                }}
+              >
+                <EyeOutlined />
+              </Button>
+            </div>
+          </div>
+        );
+      },
+    },
   ];
   return (
     <PageContainer>
       <ProTable
         headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
-          defaultMessage: 'Enquiry form',
+          id: 'pages.userTable.title',
+          defaultMessage: 'User List',
         })}
         actionRef={actionRef}
         rowKey="key"
         search={{
           labelWidth: 120,
         }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              handleModalVisible(true);
-            }}
-          >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
-          </Button>,
-        ]}
         request={user}
         columns={columns}
         rowSelection={{
@@ -158,11 +171,11 @@ const TableList = () => {
           },
         }}
       />
-      {selectedRowsState?.length > 0 && (
+      {/* {selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
             <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
+              <FormattedMessage id="pages.userTable.chosen" defaultMessage="Chosen" />{' '}
               <a
                 style={{
                   fontWeight: 600,
@@ -170,15 +183,15 @@ const TableList = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
+              <FormattedMessage id="pages.userTable.item" defaultMessage="项" />
               &nbsp;&nbsp;
               <span>
                 <FormattedMessage
-                  id="pages.searchTable.totalServiceCalls"
+                  id="pages.userTable.totalServiceCalls"
                   defaultMessage="Total number of service calls"
                 />{' '}
                 {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
+                <FormattedMessage id="pages.userTable.tenThousand" defaultMessage="万" />
               </span>
             </div>
           }
@@ -190,79 +203,13 @@ const TableList = () => {
               actionRef.current?.reloadAndRest?.();
             }}
           >
-            <FormattedMessage
-              id="pages.searchTable.batchDeletion"
-              defaultMessage="Batch deletion"
-            />
+            <FormattedMessage id="pages.userTable.batchDeletion" defaultMessage="Batch deletion" />
           </Button>
           <Button type="primary">
-            <FormattedMessage
-              id="pages.searchTable.batchApproval"
-              defaultMessage="Batch approval"
-            />
+            <FormattedMessage id="pages.userTable.batchApproval" defaultMessage="Batch approval" />
           </Button>
         </FooterToolbar>
-      )}
-      <ModalForm
-        title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: 'New rule',
-        })}
-        width="400px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value);
-
-          if (success) {
-            handleModalVisible(false);
-
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </ModalForm>
-      <UpdateForm
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
-
-          if (success) {
-            handleUpdateModalVisible(false);
-            setCurrentRow(undefined);
-
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-        onCancel={() => {
-          handleUpdateModalVisible(false);
-
-          if (!showDetail) {
-            setCurrentRow(undefined);
-          }
-        }}
-        updateModalVisible={updateModalVisible}
-        values={currentRow || {}}
-      />
+      )} */}
 
       <Drawer
         width={600}
@@ -276,7 +223,7 @@ const TableList = () => {
         {currentRow?.name && (
           <ProDescriptions
             column={2}
-            title={currentRow?.name}
+            title={currentRow?.name.toUpperCase()}
             request={async () => ({
               data: currentRow || {},
             })}
@@ -291,4 +238,4 @@ const TableList = () => {
   );
 };
 
-export default TableList;
+export default UserTabel;

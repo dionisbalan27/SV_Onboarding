@@ -16,7 +16,7 @@ type UserRepository interface {
 	CreateNewUser(entity.User) (*entity.User, error)
 	UpdateUserData(entity.User, string) (*entity.User, error)
 	DeleteUserById(string) error
-	CheckLogin(dto.Login) (*entity.CheckLogin, error)
+	CheckLogin(dto.Login) (*entity.CheckLogin, string, error)
 }
 
 type userRepository struct {
@@ -82,35 +82,37 @@ func (repo *userRepository) UpdateUserData(user entity.User, id string) (*entity
 }
 
 func (repo *userRepository) DeleteUserById(id string) error {
-	sql := "DELETE FROM users"
 
-	sql = fmt.Sprintf("%s WHERE id = '%s'", sql, id)
+	result := repo.mysqlConnection.Where("id = ?", id).Delete(&entity.User{})
 
-	if err := repo.mysqlConnection.Raw(sql).Scan(entity.User{}).Error; err != nil {
-
-		return err
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
 	}
-	// if err := repo.mysqlConnection.Delete(&entity.User{}, id).Error; err != nil  {
-	// 	return err
-	// }
 	return nil
 }
 
-func (repo *userRepository) CheckLogin(user dto.Login) (*entity.CheckLogin, error) {
+func (repo *userRepository) CheckLogin(user dto.Login) (*entity.CheckLogin, string, error) {
 	data := entity.CheckLogin{}
+	var role string
 
-	err := repo.mysqlConnection.Model(&entity.User{}).Where("users.personal_number = ?", user.Personal_number).Select("users.id, users.name, users.password").Scan(&data).Error
-
+	err := repo.mysqlConnection.Model(&entity.User{}).Where("users.personal_number = ?", user.Personal_number).Select("users.id, users.name, users.password, users.role_id").Scan(&data).Error
+	if err != nil {
+		return nil, "nil", err
+	}
+	err = repo.mysqlConnection.Model(&entity.Role{}).Where("roles.id = ?", data.RoleID).Select("roles.title").Scan(&role).Error
+	if err != nil {
+		return nil, "nil", err
+	}
 	if err != nil {
 		fmt.Println("Query error")
-		return &data, err
+		return &data, role, err
 	}
 
 	match, err := helpers.CheckPasswordHash(user.Password, data.Password)
 	if !match {
 		fmt.Println("Hash and password doesn't match.")
-		return &data, err
+		return &data, role, err
 	}
 
-	return &data, nil
+	return &data, role, nil
 }
