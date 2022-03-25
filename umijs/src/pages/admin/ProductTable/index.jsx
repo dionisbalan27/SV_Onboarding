@@ -1,4 +1,10 @@
-import { PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  CompassOutlined,
+} from '@ant-design/icons';
 import { Button, message, Input, Drawer } from 'antd';
 import React, { useState, useRef } from 'react';
 import { useIntl, FormattedMessage } from 'umi';
@@ -13,6 +19,8 @@ import {
   updateProduct,
   createNewProduct,
   removeProduct,
+  publishProduct,
+  checkProduct,
 } from '@/services/ant-design-pro/api';
 
 /**
@@ -152,10 +160,51 @@ const ProductTable = () => {
   };
 
   const handleCreateProduct = async (value) => {
+    console.log(value);
     try {
       const response = await createNewProduct(value);
       if (response.status === 'ok') {
         message.success('Product created successfully');
+        handleModalVisible(false);
+        if (actionRef.current) {
+          actionRef.current.reload();
+        }
+      }
+    } catch (error) {
+      message.error(error?.data?.error);
+    }
+  };
+
+  const handlePublish = async (value) => {
+    const payload = {
+      name: value.name,
+      description: value.description,
+    };
+
+    try {
+      const response = await publishProduct(value.id, payload);
+      if (response.status === 'ok') {
+        message.success('Update user successfully');
+        handleModalVisible(false);
+        if (actionRef.current) {
+          actionRef.current.reload();
+        }
+      }
+    } catch (error) {
+      message.error(error?.data?.error);
+    }
+  };
+
+  const handleCheck = async (value) => {
+    const payload = {
+      name: value.name ?? currentRow.name,
+      description: value.description ?? currentRow.description,
+    };
+
+    try {
+      const response = await checkProduct(value.id, payload);
+      if (response.status === 'ok') {
+        message.success('Update user successfully');
         handleModalVisible(false);
         if (actionRef.current) {
           actionRef.current.reload();
@@ -307,11 +356,54 @@ const ProductTable = () => {
         width="400px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
-        onFinish={(value) =>
-          modalType === 'edit'
-            ? handleUpdateProduct({ ...value, id: currentRow.id })
-            : handleCreateProduct(value)
-        }
+        onFinish={(value) => {
+          console.log(modalType);
+          switch (modalType) {
+            case 'edit':
+              handleUpdateProduct({ ...value, id: currentRow.id });
+              break;
+            case 'publish':
+              handlePublish({ ...value, id: currentRow.id });
+              break;
+            case 'check':
+              handleCheck({ ...value, id: currentRow.id });
+              break;
+            case 'add':
+              console.log(value);
+              handleCreateProduct(value);
+          }
+        }}
+        submitter={{
+          render: (props) => {
+            return modalType === 'edit' ? (
+              <div id="actions" style={{ display: 'flex' }}>
+                <button
+                  onClick={() => {
+                    setModalType('check');
+                    props.form?.submit?.();
+                  }}
+                >
+                  Checked
+                </button>
+                <button
+                  onClick={() => {
+                    setModalType('publish');
+                    props.form?.submit?.();
+                  }}
+                >
+                  Published
+                </button>
+                <button onClick={() => props.form?.submit?.()}>Submit</button>
+              </div>
+            ) : (
+              <div>
+                <button type="submit" onClick={() => props.form?.submit?.()}>
+                  Submit
+                </button>
+              </div>
+            );
+          },
+        }}
       >
         <ProFormText width="md" name="name" placeholder="Name" label="Name" />
         <ProFormText width="md" name="description" placeholder="Description" label="Description" />

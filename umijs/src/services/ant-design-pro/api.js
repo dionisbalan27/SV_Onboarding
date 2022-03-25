@@ -63,7 +63,36 @@ export async function user(params) {
 export async function getRole() {
   return request(`http://localhost:8001/roles`, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
+  });
+}
+
+export async function checkProduct(id, payload) {
+  console.log(payload);
+  console.log(localStorage.getItem('token'));
+  return request(`http://localhost:8001/products/${id}/checked`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')}`,
+    },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
+  });
+}
+
+export async function publishProduct(id, payload) {
+  return request(`http://localhost:8001/products/${id}/published`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
   });
 }
 
@@ -71,14 +100,21 @@ export async function userDetail(id) {
   console.log(id);
   return request(`http://localhost:8001/user/${id}`, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
   });
 }
 
 export async function updateUser(id, payload) {
+  console.log(localStorage.getItem('token'));
   return request(`http://localhost:8001/user/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
     body: JSON.stringify(payload),
     skipErrorHandler: true,
   });
@@ -88,7 +124,10 @@ export async function removeUser(id) {
   console.log(id);
   return request(`http://localhost:8001/user/${id}`, {
     method: 'DELETE',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
     skipErrorHandler: true,
   });
 }
@@ -110,14 +149,21 @@ export async function product(params) {
 export async function productDetail(id) {
   return request(`http://localhost:8001/products/${id}`, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
   });
 }
 
 export async function createNewProduct(payload) {
+  console.log(payload);
   return request(`http://localhost:8001/product`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
     body: JSON.stringify(payload),
     skipErrorHandler: true,
   });
@@ -126,7 +172,10 @@ export async function createNewProduct(payload) {
 export async function updateProduct(id, payload) {
   return request(`http://localhost:8001/products/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
     body: JSON.stringify(payload),
     skipErrorHandler: true,
   });
@@ -135,7 +184,10 @@ export async function updateProduct(id, payload) {
 export async function removeProduct(id) {
   return request(`http://localhost:8001/product/${id}`, {
     method: 'DELETE',
-    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + `${localStorage.getItem('token')} `,
+    },
     skipErrorHandler: true,
   });
 }

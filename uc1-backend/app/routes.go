@@ -49,9 +49,6 @@ func InitRouter(postgresConn *gorm.DB) *gin.Engine {
 		protectedRoutes.GET("/user/:id", userDelivery.GetUserById)
 		protectedRoutes.GET("/products", productDelivery.GetAllProducts)
 		protectedRoutes.GET("/products/:id", productDelivery.GetProductById)
-		protectedRoutes.POST("/product", productDelivery.CreateNewProduct)
-		protectedRoutes.PUT("/products/:id", productDelivery.UpdateProductData)
-		protectedRoutes.DELETE("/product/:id", productDelivery.DeleteProductById)
 	}
 
 	adminRoutes := router.Group("/")
@@ -59,6 +56,9 @@ func InitRouter(postgresConn *gorm.DB) *gin.Engine {
 	{
 		adminRoutes.PUT("/user/:id", userDelivery.UpdateUserData)
 		adminRoutes.DELETE("/user/:id", userDelivery.DeleteUserById)
+		adminRoutes.POST("/product", productDelivery.CreateNewProduct)
+		adminRoutes.PUT("/products/:id", productDelivery.UpdateProductData)
+		adminRoutes.DELETE("/product/:id", productDelivery.DeleteProductById)
 	}
 
 	checkerRoutes := router.Group("/")

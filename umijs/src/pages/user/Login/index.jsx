@@ -60,9 +60,9 @@ const Login = () => {
         // if (!history) return;
         // const { query } = history.location;
         // const { redirect } = query;
-        if (msg.data.role == 'viewer') {
+        if (msg.data.role == 'signer') {
           console.log('success');
-          history.push('/viewer/');
+          history.push('/signer');
           return;
         }
         if (msg.data.role == 'admin') {
@@ -77,7 +77,7 @@ const Login = () => {
           history.push('/checker');
           return;
         } else {
-          history.push(redirect || '/');
+          history.push(redirect || '/viewer');
           return;
         }
       }

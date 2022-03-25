@@ -75,10 +75,14 @@ func JWTAuthChecker(jwtUsecase jwt_usecase.JwtUsecase, userRepo user_repository.
 		}
 
 		if user.Title != "checker" {
-			errorRes := helpers.ResponseError("Unauthorized", 401)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, errorRes)
-			return
+			if user.Title != "admin" {
+				errorRes := helpers.ResponseError("Unauthorized", 401)
+				c.AbortWithStatusJSON(http.StatusUnauthorized, errorRes)
+				return
+			}
+			c.Set("user_id", userId)
 		}
+
 		// panic(user.Title)
 		c.Set("user_id", userId)
 	}
@@ -104,9 +108,12 @@ func JWTAuthSigner(jwtUsecase jwt_usecase.JwtUsecase, userRepo user_repository.U
 		}
 
 		if user.Title != "signer" {
-			errorRes := helpers.ResponseError("Unauthorized", 401)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, errorRes)
-			return
+			if user.Title != "admin" {
+				errorRes := helpers.ResponseError("Unauthorized", 401)
+				c.AbortWithStatusJSON(http.StatusUnauthorized, errorRes)
+				return
+			}
+			c.Set("user_id", userId)
 		}
 		// panic(user.Title)
 		c.Set("user_id", userId)

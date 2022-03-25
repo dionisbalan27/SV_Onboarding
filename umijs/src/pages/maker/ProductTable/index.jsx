@@ -107,38 +107,6 @@ const ProductTable = () => {
    * @zh-CN 国际化配置
    * */
 
-  const handleRemoveProduct = async (id) => {
-    try {
-      const response = await removeProduct(id);
-      if (response.status === 'ok') {
-        message.success('Deleted successfully');
-        actionRef.current.reload();
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleUpdateProduct = async (value) => {
-    const payload = {
-      name: value.name,
-      description: value.description,
-    };
-
-    try {
-      const response = await updateProduct(value.id, payload);
-      if (response.status === 'ok') {
-        message.success('Update user successfully');
-        handleModalVisible(false);
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
   const handleProductDetail = async (id) => {
     try {
       const response = await productDetail(id);
@@ -188,11 +156,6 @@ const ProductTable = () => {
         return (
           <div style={{ display: 'flex' }}>
             <div style={{ marginRight: 5 }}>
-              <Button onClick={() => handleRemoveProduct(rowData.id)}>
-                <DeleteOutlined />
-              </Button>
-            </div>
-            <div style={{ marginRight: 5 }}>
               <Button
                 onClick={() => {
                   handleModalVisible(true);
@@ -201,15 +164,6 @@ const ProductTable = () => {
                 }}
               >
                 <EditOutlined />
-              </Button>
-            </div>
-            <div style={{ marginRight: 5 }}>
-              <Button
-                onClick={() => {
-                  handleProductDetail(rowData.id);
-                }}
-              >
-                <EyeOutlined />
               </Button>
             </div>
           </div>

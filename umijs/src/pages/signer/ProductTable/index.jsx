@@ -1,19 +1,12 @@
-import { PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button, message, Input, Drawer } from 'antd';
-import React, { useState, useRef } from 'react';
+import { PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { Button, message, Drawer } from 'antd';
+import { useState, useRef } from 'react';
 import { useIntl, FormattedMessage } from 'umi';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+import { ModalForm, ProFormText } from '@ant-design/pro-form';
 import ProDescriptions from '@ant-design/pro-descriptions';
-import UpdateForm from './components/UpdateForm';
-import {
-  product,
-  productDetail,
-  updateProduct,
-  createNewProduct,
-  removeProduct,
-} from '@/services/ant-design-pro/api';
+import { product, productDetail, publishProduct } from '@/services/ant-design-pro/api';
 
 /**
  * @en-US Add node
@@ -107,26 +100,14 @@ const ProductTable = () => {
    * @zh-CN 国际化配置
    * */
 
-  const handleRemoveProduct = async (id) => {
-    try {
-      const response = await removeProduct(id);
-      if (response.status === 'ok') {
-        message.success('Deleted successfully');
-        actionRef.current.reload();
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleUpdateProduct = async (value) => {
+  const handlePublish = async (value) => {
     const payload = {
       name: value.name,
       description: value.description,
     };
 
     try {
-      const response = await updateProduct(value.id, payload);
+      const response = await publishProduct(value.id, payload);
       if (response.status === 'ok') {
         message.success('Update user successfully');
         handleModalVisible(false);
@@ -145,21 +126,6 @@ const ProductTable = () => {
       if (response.status === 'ok') {
         setShowDetail(true);
         setCurrentRow(response.data);
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleCreateProduct = async (value) => {
-    try {
-      const response = await createNewProduct(value);
-      if (response.status === 'ok') {
-        message.success('Product created successfully');
-        handleModalVisible(false);
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
       }
     } catch (error) {
       message.error(error?.data?.error);
@@ -187,11 +153,6 @@ const ProductTable = () => {
       render: (_, rowData) => {
         return (
           <div style={{ display: 'flex' }}>
-            <div style={{ marginRight: 5 }}>
-              <Button onClick={() => handleRemoveProduct(rowData.id)}>
-                <DeleteOutlined />
-              </Button>
-            </div>
             <div style={{ marginRight: 5 }}>
               <Button
                 onClick={() => {
@@ -302,16 +263,12 @@ const ProductTable = () => {
         }}
         title={intl.formatMessage({
           id: 'pages.productTable.createForm.newRule',
-          defaultMessage: modalType === 'edit' ? 'Edit Product' : 'Create Product',
+          defaultMessage: 'Edit Product',
         })}
         width="400px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
-        onFinish={(value) =>
-          modalType === 'edit'
-            ? handleUpdateProduct({ ...value, id: currentRow.id })
-            : handleCreateProduct(value)
-        }
+        onFinish={(value) => handlePublish({ ...value, id: currentRow.id })}
       >
         <ProFormText width="md" name="name" placeholder="Name" label="Name" />
         <ProFormText width="md" name="description" placeholder="Description" label="Description" />

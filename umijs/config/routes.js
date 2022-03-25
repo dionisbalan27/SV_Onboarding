@@ -47,8 +47,14 @@ export default [
   {
     name: 'list.table-list',
     icon: 'table',
-    path: '/viewer/users',
-    access: 'canViewer' || 'canSigner' || 'canMaker' || 'canChecker',
+    path: '/users',
+    routes: [
+      { access: 'canViewer' },
+      { access: 'canSigner' },
+      { access: 'canMaker' },
+      { access: 'canChecker' },
+    ],
+
     component: './UserTable',
   },
   {
@@ -58,7 +64,20 @@ export default [
     access: 'canViewer',
     component: './viewer/ProductTable',
   },
-
+  {
+    icon: 'table',
+    name: 'list.basic-list',
+    path: '/checker/productlist',
+    access: 'canChecker',
+    component: './checker/ProductTable',
+  },
+  {
+    icon: 'table',
+    name: 'list.basic-list',
+    path: '/signer/productlist',
+    access: 'canSigner',
+    component: './signer/ProductTable',
+  },
   {
     path: '/',
     redirect: '/welcome',
