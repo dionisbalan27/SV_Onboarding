@@ -1,7 +1,7 @@
 package user_repository
 
 import (
-	helpers "backend-api/helpers/helpers_user"
+	"backend-api/helpers"
 	"backend-api/models/user/dto"
 	"backend-api/models/user/entity"
 	"fmt"

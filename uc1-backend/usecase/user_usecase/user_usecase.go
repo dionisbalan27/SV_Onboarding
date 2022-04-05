@@ -1,7 +1,7 @@
 package user_usecase
 
 import (
-	helpers "backend-api/helpers/helpers_user"
+	"backend-api/helpers"
 	"backend-api/models/user/dto"
 	"backend-api/models/user/entity"
 	"backend-api/repository/user_repository"
@@ -23,6 +23,9 @@ type UserUsecase interface {
 type userUsecase struct {
 	userRepo   user_repository.UserRepository
 	jwtUsecase jwt_usecase.JwtUsecase
+}
+type UserUsecaseTest struct {
+	userRepo *user_repository.UserRepositoryMock
 }
 
 func GetUserUsecase(jwtUsecase jwt_usecase.JwtUsecase, userRepository user_repository.UserRepository) UserUsecase {
@@ -47,20 +50,20 @@ func (user *userUsecase) GetAllUsers() dto.Response {
 	}
 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Error Data not found", err)
+		return helpers.ResponseError("Data not found", err, 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", err)
+		return helpers.ResponseError("Internal server error", err, 500)
 	}
-	return helpers.ResponseSuccess("ok", nil, response)
+	return helpers.ResponseSuccess("ok", nil, response, 200)
 }
 
 func (user *userUsecase) GetUserById(id string) dto.Response {
 	userData, err := user.userRepo.GetUserById(id)
 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Error Data not found", nil)
+		return helpers.ResponseError("Data not found", err.Error(), 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", nil)
+		return helpers.ResponseError("Internal server error", err.Error(), 500)
 	}
 
 	role := dto.Role{
@@ -76,7 +79,7 @@ func (user *userUsecase) GetUserById(id string) dto.Response {
 		"personalNumber": userData.Personal_number,
 		"active":         userData.Active,
 	}
-	return helpers.ResponseSuccess("ok", nil, userResponse)
+	return helpers.ResponseSuccess("ok", nil, userResponse, 200)
 }
 
 func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
@@ -92,11 +95,15 @@ func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 	userData, err := user.userRepo.CreateNewUser(userInsert)
 
 	if err != nil {
-		return helpers.ResponseError("Internal server error", err)
-	}
+		if err.Error() == "Personal number already registered" {
+			return helpers.ResponseError("Conflict", err.Error(), 409)
+		} else {
+			return helpers.ResponseError("Internal server error", err.Error(), 500)
+		}
 
+	}
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"id": userData.ID})
+		"id": userData.ID}, 201)
 }
 
 func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
@@ -115,12 +122,15 @@ func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Resp
 	_, err := user.userRepo.UpdateUserData(userInsert, id)
 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Error Data not found", 404)
+		return helpers.ResponseError("Data not found", err.Error(), 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		if err.Error() == "Personal number already taken" {
+			return helpers.ResponseError("Confilct", err.Error(), 409)
+		}
+		return helpers.ResponseError("Internal server error", err.Error(), 500)
 	}
 	userUpdate.Id = id
-	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id})
+	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id}, 200)
 }
 
 func (user *userUsecase) DeleteUserById(id string) dto.Response {
@@ -128,26 +138,26 @@ func (user *userUsecase) DeleteUserById(id string) dto.Response {
 	err := user.userRepo.DeleteUserById(id)
 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Error Data not found", 404)
+		return helpers.ResponseError("Data not found", err.Error(), 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		return helpers.ResponseError("Internal server error", err.Error(), 500)
 	}
-	return helpers.ResponseSuccess("User deleted successfully", 200, nil)
+	return helpers.ResponseSuccess("ok", nil, nil, 200)
 }
 
 func (user *userUsecase) UserLogin(newUser dto.Login) dto.Response {
 
 	res, role, err := user.userRepo.CheckLogin(newUser)
 	if err != nil {
-		return helpers.ResponseError("Error Data not found", 404)
+		return helpers.ResponseError("Data not found", "Wrong personal number / password", 404)
 	}
 
 	t, err := user.jwtUsecase.GenerateToken(res.ID)
 	if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		return helpers.ResponseError("Data not found", "Wrong personal number / password", 404)
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"token": t, "name": res.Name, "role": role})
+		"token": t, "name": res.Name, "role": role}, 200)
 
 }

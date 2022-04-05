@@ -1,7 +1,7 @@
 package role_usecase
 
 import (
-	helpers "backend-api/helpers/helpers_user"
+	"backend-api/helpers"
 	"backend-api/models/user/dto"
 )
 

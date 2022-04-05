@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	helpers "backend-api/helpers/helpers_user"
+	"backend-api/helpers"
 	"backend-api/repository/user_repository"
 	"backend-api/usecase/jwt_usecase"
 

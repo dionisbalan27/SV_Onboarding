@@ -4,6 +4,7 @@ import (
 	"backend-api/app"
 	"backend-api/config"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -24,6 +25,7 @@ func main() {
 
 	router := app.InitRouter(postgresConn)
 	log.Println("routes Initialized")
+	fmt.Println("routes Initialized")
 
 	port := config.CONFIG["PORT"]
 	srv := &http.Server{
